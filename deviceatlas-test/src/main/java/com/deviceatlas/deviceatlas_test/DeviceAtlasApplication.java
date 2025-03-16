@@ -9,7 +9,6 @@ public class DeviceAtlasApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(DeviceAtlasApplication.class, args);
 		System.out.println("DeviceAtlasApplication started successfully");
-		System.out.println("Please open your browser and navigate to http://localhost:8080/");
 	}
 
 }
