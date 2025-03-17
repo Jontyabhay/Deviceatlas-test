@@ -1,7 +1,5 @@
 package com.deviceatlas.deviceatlas_test;
 
-import com.deviceatlas.deviceatlas_test.DeviceAtlasService;
-
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +16,6 @@ public class DeviceAtlasController {
 
     @GetMapping("/")
     public List<String> detectDeviceProperties() {
-        return deviceAtlasService.processUserAgents();
+        return deviceAtlasService.processandstoreUserAgents();
     }
 }

@@ -1,9 +1,12 @@
 package com.deviceatlas.deviceatlas_test;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-import org.springframework.beans.factory.annotation.Value;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.util.List;
 import java.util.ArrayList;
 import org.slf4j.Logger;
@@ -14,14 +17,16 @@ public class DeviceAtlasService {
 
     private final RestTemplate restTemplate;
 
-    private static final Logger logger = LoggerFactory.getLogger(DeviceAtlasService.class); // Define logger
+    private static final Logger logger = LoggerFactory.getLogger(DeviceAtlasService.class);
 
+    @Autowired
+    private DeviceAtlasRepo deviceAtlasRepo;
 
     public DeviceAtlasService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
-
-    public List<String> processUserAgents() {
+        
+    public List<String> processandstoreUserAgents() {
         List<String> userAgents = List.of(
             "Mozilla/5.0 (Linux; Android 7.0; Pixel C Build/NRD90M; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/52.0.2743.98 Safari/537.36",
             "Mozilla/5.0 (Linux; Android 10; MAR-LX1A) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Mobile Safari/537.36",
@@ -36,18 +41,45 @@ public class DeviceAtlasService {
         );
 
         List<String> responses = new ArrayList<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+
         for (String userAgent : userAgents) {
             try {
-                String url = UriComponentsBuilder.fromHttpUrl("https://region0.deviceatlascloud.com/v1/detect/properties?licencekey=e6ce0b9455cab0e494be4587d016c7c2&useragent={value}")
+                String url = UriComponentsBuilder.fromUriString("https://region0.deviceatlascloud.com/v1/detect/properties?licencekey=e6ce0b9455cab0e494be4587d016c7c2&useragent={value}")
                         .buildAndExpand(userAgent)
                         .toUriString();
                 String response = restTemplate.getForObject(url, String.class);
                 responses.add(response);
+                System.out.println(response);
+
+                // Parse the response to extract fields
+                JsonNode jsonNode = objectMapper.readTree(response);
+                String primaryHardwareType = jsonNode.path("properties").path("primaryHardwareType").asText();
+                String osVersion = jsonNode.path("properties").path("osVersion").asText();
+                String vendor = jsonNode.path("properties").path("vendor").asText();
+                String browserVersion = jsonNode.path("properties").path("browserVersion").asText();
+                String browserName = jsonNode.path("properties").path("browserName").asText();
+                String model = jsonNode.path("properties").path("model").asText();
+                String osName = jsonNode.path("properties").path("osName").asText();
+                String browserRenderingEngine = jsonNode.path("properties").path("browserRenderingEngine").asText();
+
+                // Save the extracted fields to the database
+                DeviceAtlasProperties deviceAtlasProperties = new DeviceAtlasProperties();
+                deviceAtlasProperties.setPrimaryHardwareType(primaryHardwareType);
+                deviceAtlasProperties.setOsVersion(osVersion);
+                deviceAtlasProperties.setVendor(vendor);
+                deviceAtlasProperties.setBrowserVersion(browserVersion);
+                deviceAtlasProperties.setBrowserName(browserName);
+                deviceAtlasProperties.setModel(model);
+                deviceAtlasProperties.setOsName(osName);
+                deviceAtlasProperties.setBrowserRenderingEngine(browserRenderingEngine);
+                deviceAtlasRepo.save(deviceAtlasProperties);
             } catch (Exception e) {
                 logger.error("Error while calling DeviceAtlas API for UserAgent: {}", userAgent, e);
             }
         }
-        System.out.println(responses);  // Print all responses
-        return responses;  // Return all responses
+        System.out.println(responses);  
+        return responses;
     }
+    
 }
