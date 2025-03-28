@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-public class DeviceAtlasController {
+public class DeviceAtlasController {  // Controller class to handle requests
 
     private final DeviceAtlasService deviceAtlasService;
 
@@ -28,7 +28,7 @@ public class DeviceAtlasController {
     }
 
     @GetMapping("/tablets")
-    public String getTablets(Model model) {
+    public String getTablets(Model model) { // Backend function to get tablets
         List<DeviceAtlasProperties> tablets = deviceAtlasRepo.findAll().stream()
                 .filter(device -> "tablet".equalsIgnoreCase(device.getPrimaryHardwareType()))
                 .sorted((d1, d2) -> d1.getOsVersion().compareTo(d2.getOsVersion()))

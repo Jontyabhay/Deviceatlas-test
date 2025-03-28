@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Service
-public class DeviceAtlasService {
+public class DeviceAtlasService { // Service class to call DeviceAtlas API and store the response in the database
 
     private final RestTemplate restTemplate;
 
@@ -26,7 +26,7 @@ public class DeviceAtlasService {
         this.restTemplate = restTemplate;
     }
         
-    public List<String> processandstoreUserAgents() {
+    public List<String> processandstoreUserAgents() { // Method to call DeviceAtlas API for a list of UserAgents and store the response in the database
         List<String> userAgents = List.of(
             "Mozilla/5.0 (Linux; Android 7.0; Pixel C Build/NRD90M; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/52.0.2743.98 Safari/537.36",
             "Mozilla/5.0 (Linux; Android 10; MAR-LX1A) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Mobile Safari/537.36",

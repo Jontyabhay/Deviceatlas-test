@@ -9,7 +9,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "device_atlas")
-public class DeviceAtlasProperties {
+public class DeviceAtlasProperties {   // Entity class to store the device properties
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) 

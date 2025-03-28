@@ -8,7 +8,7 @@ import org.springframework.web.client.RestTemplate;
 public class DeviceAtlasAppConfig {
 
     @Bean
-    public RestTemplate restTemplate() {
+    public RestTemplate restTemplate() {  // Create a bean for restTemplate to call services
         return new RestTemplate();
     }
 }
